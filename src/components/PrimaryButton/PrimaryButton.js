@@ -1,8 +1,8 @@
 import React from 'react';
 
-const PrimaryButton = ({children}) => {
+const PrimaryButton = ({children, type}) => {
     return (
-        <button className="btn btn-primary bg-gradient-to-tr from-primary to-secondary text-white">{children}</button>
+        <button type={type} className="btn btn-primary bg-gradient-to-tr from-primary to-secondary text-white">{children}</button>
     );
 };
 
