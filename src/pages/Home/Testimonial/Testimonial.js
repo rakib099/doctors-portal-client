@@ -3,11 +3,12 @@ import SectionTitle from '../../../components/SectionTitle/SectionTitle';
 import people1 from '../../../assets/images/people1.png';
 import people2 from '../../../assets/images/people2.png';
 import people3 from '../../../assets/images/people3.png';
+import quote from '../../../assets/icons/quote.svg';
 import FeedbackCard from './FeedbackCard';
 
 const Testimonial = () => {
 
-    const cardData = [
+    const feedbackData = [
         {
             id: 1,
             img: people1,
@@ -33,13 +34,21 @@ const Testimonial = () => {
 
     return (
         <section className='testimonial mt-16 lg:mt-28 lg:px-12 2xl:px-0'>
-            <SectionTitle className="font-bold mb-2">Testimonial</SectionTitle>
-            <h2 className="text-neutral text-4xl mb-16 lg:mb-24">What Our Patients Says</h2>
+            <div className='mb-16 lg:mb-24 flex items-center justify-between'>
+                <div>
+                    <SectionTitle className="font-bold mb-2">Testimonial</SectionTitle>
+                    <h2 className="text-neutral text-4xl">What Our Patients Says</h2>
+                </div>
+                <figure>
+                    <img className='w-24 lg:w-48' src={quote} alt="" />
+                </figure>
+            </div>
+
             <div className="feedbacks grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-11 lg:gap-14">
                 {
-                    cardData.map(card => <FeedbackCard 
-                        key={card.id}
-                        card={card}
+                    feedbackData.map(feedback => <FeedbackCard
+                        key={feedback.id}
+                        feedback={feedback}
                     />)
                 }
             </div>

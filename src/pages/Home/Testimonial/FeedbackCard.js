@@ -1,10 +1,10 @@
 import React from 'react';
 
-const FeedbackCard = ({ card }) => {
-    const { img, name, region, description } = card
+const FeedbackCard = ({ feedback }) => {
+    const { img, name, region, description } = feedback
 
     return (
-        <div className="card bg-base-100 shadow-md">
+        <div className="card bg-base-100 shadow-lg">
             <div className="card-body">
                 <p>{description}</p>
                 <div className='flex items-center gap-3 mt-9 lg:mt-11'>
