@@ -6,7 +6,7 @@ const DentalCare = () => {
     return (
         <div className="hero mt-14 lg:mt-36">
             <div className="hero-content flex-col lg:flex-row gap-9 lg:gap-20">
-                <img src={treatment} className="max-w-sm rounded-lg shadow-2xl" alt='treatment-img' />
+                <img src={treatment} className="w-3/4 lg:max-w-sm rounded-lg shadow-2xl" alt='treatment-img' />
                 <div className='lg:w-2/5'>
                     <h1 className="text-5xl font-bold">Exceptional Dental <br /> Care, on Your Terms</h1>
                     <p className="py-6">It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsumis that it has a more-or-less normal distribution of letters,as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page</p>

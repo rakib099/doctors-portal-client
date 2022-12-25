@@ -10,7 +10,7 @@ const Contact = () => {
 
     return (
         <section style={style} className="mt-32 lg:mt-36 py-16 rounded-lg">
-            <div className='mb-4 lg:mb-10 text-center'>
+            <div className='mb-4 lg:mb-10 text-center px-6'>
                 <SectionTitle className="font-bold mb-2">Contact Us</SectionTitle>
                 <h3 className="text-4xl text-white font-normal">Stay connected with us</h3>
             </div>
