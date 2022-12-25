@@ -16,9 +16,10 @@ const Contact = () => {
             </div>
             <form>
                 <div className="flex flex-col gap-5 items-center px-8 lg:px-0">
-                    <input type="email" placeholder="Email Address" className="input w-full max-w-sm" />
-                    <input type="text" placeholder="Subject" className="input w-full max-w-sm" />
-                    <textarea className="textarea w-full max-w-sm mb-2" placeholder="Your message"></textarea>
+                    <input type="email" placeholder="Email Address"
+                    name="email" className="input w-full max-w-sm" />
+                    <input type="text" placeholder="Subject" name='subject' className="input w-full max-w-sm" />
+                    <textarea className="textarea w-full max-w-sm mb-2" placeholder="Your message" name='message'></textarea>
                     <PrimaryButton type="submit">Submit</PrimaryButton>
                 </div>
             </form>
