@@ -1,14 +1,26 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { useForm } from "react-hook-form";
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../../contexts/AuthProvider';
 
 const Login = () => {
-    const {user} = useContext(AuthContext)
-    const { register, formState: {errors}, handleSubmit } = useForm();
+    const { register, formState: { errors }, handleSubmit } = useForm();
+    const { signIn } = useContext(AuthContext);
+    const [error, setError] = useState(""); // firebase error message
 
-    const handleLogin = data => {
-        console.log(data)
+    const handleLogin = (data, e) => {
+        e.target.reset();
+        setError("");
+
+        signIn(data.email, data.password)
+            .then(result => {
+                const user = result.user;
+                console.log(user);
+            })
+            .catch(err => {
+                console.error(err);
+                setError(err.message);
+            });
     }
 
     return (
@@ -27,10 +39,15 @@ const Login = () => {
                         <label className="label">
                             <span className="label-text">Password</span>
                         </label>
-                        <input type="password" {...register("password", {required: "Password is required", minLength: { value: 6, message: "Password must be at least 6 characters long" }})} placeholder="" className="input input-bordered w-full mb-1" />
+                        <input type="password" {...register("password", {
+                            required: "Password is required",
+                            minLength: { value: 6, message: "Password must be at least 6 characters long" }
+                        })} placeholder="" className="input input-bordered w-full mb-1" />
                         <span className="label-text-alt">Forgot Password?</span>
                     </div>
                     {errors.password && <p className='text-red-600' role="alert">{errors.password?.message}</p>}
+                    {/* firebase error */}
+                    {error && <p className='text-red-500'>{error}</p>}
                     <input type="submit" className='btn btn-neutral w-full mb-2' value="Login" />
                 </form>
                 <p className='text-xs'>New to Doctors Portal? <Link className='text-secondary' to="/signup">Create new account</Link></p>
