@@ -3,12 +3,14 @@ import React, { useContext, useState } from 'react';
 import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../contexts/AuthProvider';
+import ForgotPassModal from './ForgotPassModal';
 
 const Login = () => {
     const { register, formState: { errors }, handleSubmit } = useForm();
     const { signIn, providerLogin } = useContext(AuthContext);
     const [error, setError] = useState(""); // firebase error message
-    
+    const [openModal, setOpenModal] = useState(true);
+
     const location = useLocation();
     const navigate = useNavigate();
     const from = location.state?.from?.pathname || "/";
@@ -23,7 +25,7 @@ const Login = () => {
             .then(result => {
                 const user = result.user;
                 console.log(user);
-                navigate(from, {replace: true});
+                navigate(from, { replace: true });
             })
             .catch(err => {
                 console.error(err);
@@ -33,12 +35,12 @@ const Login = () => {
 
     const handleGoogleSignIn = () => {
         providerLogin(googleProvider)
-        .then(result => {
-            const user = result.user;
-            console.log(user);
-            navigate(from, {replace: true});
-        })
-        .catch(err => console.error(err));
+            .then(result => {
+                const user = result.user;
+                console.log(user);
+                navigate(from, { replace: true });
+            })
+            .catch(err => console.error(err));
     }
 
     return (
@@ -61,7 +63,7 @@ const Login = () => {
                             required: "Password is required",
                             minLength: { value: 6, message: "Password must be at least 6 characters long" }
                         })} placeholder="" className="input input-bordered w-full mb-1" />
-                        <span className="label-text-alt">Forgot Password?</span>
+                        <label onClick={() => setOpenModal(true)} htmlFor="reset-pass-modal" className=" label-text-alt cursor-pointer">Forgot Password?</label>
                     </div>
                     {errors.password && <p className='text-red-600' role="alert">{errors.password?.message}</p>}
                     {/* firebase error */}
@@ -72,6 +74,12 @@ const Login = () => {
                 <div className="divider">OR</div>
                 <button onClick={handleGoogleSignIn} className="btn btn-outline uppercase w-full">Continue with Google</button>
             </div>
+            {
+                !!openModal &&
+                <ForgotPassModal
+                    setOpenModal={setOpenModal}
+                />
+            }
         </div>
     );
 };
