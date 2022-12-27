@@ -1,21 +1,34 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import SectionTitle from '../../../components/SectionTitle/SectionTitle';
 import { format } from 'date-fns';
 import AppointmentOption from './AppointmentOption';
 import BookingModal from '../BookingModal/BookingModal';
+import { useQuery } from '@tanstack/react-query';
+import Spinner from '../../../components/Spinner/Spinner';
 
 const AvailableAppointments = ({ selectedDate }) => {
-    const [appointmentOptions, setAppointmentOptions] = useState([]);
     const [treatment, setTreatment] = useState(null);
 
-    useEffect(() => {
-        fetch('http://localhost:5000/appointmentOptions')
-            .then(res => res.json())
-            .then(data => {
-                setAppointmentOptions(data);
-            })
-            .catch(err => console.error(err));
-    }, []);
+    const { data:appointmentOptions = [] } = useQuery({
+        queryKey: ['appointmentOptions'],
+        queryFn: () => {
+            return fetch('http://localhost:5000/appointmentOptions')
+                .then(res => res.json())
+        }
+    });
+
+    // if (isLoading) {
+    //     return <Spinner loading={isLoading} />
+    // }
+
+    // useEffect(() => {
+    //     fetch('http://localhost:5000/appointmentOptions')
+    //         .then(res => res.json())
+    //         .then(data => {
+    //             setAppointmentOptions(data);
+    //         })
+    //         .catch(err => console.error(err));
+    // }, []);
 
     return (
         <section className='mt-8 mb-40'>
@@ -32,12 +45,12 @@ const AvailableAppointments = ({ selectedDate }) => {
                     />)
                 }
             </div>
-            {   
+            {
                 !!treatment &&
-                <BookingModal 
-                treatment={treatment} 
-                selectedDate={selectedDate}
-                setTreatment={setTreatment}
+                <BookingModal
+                    treatment={treatment}
+                    selectedDate={selectedDate}
+                    setTreatment={setTreatment}
                 />
             }
         </section>
