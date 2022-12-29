@@ -41,6 +41,7 @@ const SignUp = () => {
         updateUserProfile(profile)
         .then(() => {
             console.log("profile updated")
+            navigate('/');
         })
         .catch(err => console.error(err));
     }

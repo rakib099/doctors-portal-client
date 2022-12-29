@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { format } from 'date-fns';
+import { AuthContext } from '../../../contexts/AuthProvider';
+import { toast } from 'react-hot-toast';
 
-const BookingModal = ({ treatment, selectedDate, setTreatment }) => {
+const BookingModal = ({ treatment, selectedDate, setTreatment, refetch }) => {
     // treatment is just another name of appointment option
-    const { name, slots } = treatment;
+    const { _id, name, slots } = treatment;
     const date = format(selectedDate, 'PP');
+    const {user} = useContext(AuthContext);
 
     const selectTimeSlot = <select name='slot' className="select select-bordered w-full mb-5">
         {/* checking if slots are available or not */}
@@ -30,6 +33,7 @@ const BookingModal = ({ treatment, selectedDate, setTreatment }) => {
 
         const booking = {
             appointmentDate: date,
+            treatmentId: _id,
             treatment: treatment.name,
             name,
             slot,
@@ -40,8 +44,26 @@ const BookingModal = ({ treatment, selectedDate, setTreatment }) => {
         // Todo: send data to the server
         // once data is saved then close the modal
         // and display success toast
-        console.log(booking)
-        setTreatment(null); // closes the modal
+        fetch('http://localhost:5000/bookings', {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify(booking)
+        })
+        .then(res => res.json())
+        .then(data => {
+            console.log(data);
+            if (data.acknowledged) {
+                setTreatment(null); // closes the modal
+                toast.success("Booking Confirmed!");
+                refetch();
+            }
+            else {
+                toast.error(data.message);
+            }
+        })
+        .catch(err => console.error(err));
     }
 
     return (
@@ -56,9 +78,9 @@ const BookingModal = ({ treatment, selectedDate, setTreatment }) => {
                         <input type="text" placeholder="Selected date" defaultValue={date} className="input input-bordered w-full mb-5 " disabled />
                         {/* Select a slot */}
                         {selectTimeSlot}
-                        <input type="text" placeholder="Full Name" name='name' className="input input-bordered w-full mb-5" required />
+                        <input type="text" defaultValue={user?.displayName} placeholder="Full Name" name='name' className="input input-bordered w-full mb-5" required disabled />
                         <input type="number" placeholder="Phone Number" name='phone' className="input input-bordered w-full mb-5" />
-                        <input type="email" placeholder="Email" name='email' className="input input-bordered w-full mb-5" required />
+                        <input type="email" defaultValue={user?.email} placeholder="Email" name='email' className="input input-bordered w-full mb-5" required disabled />
                         <input type="submit" value="Submit" className='btn w-full' />
                     </form>
                 </div>
