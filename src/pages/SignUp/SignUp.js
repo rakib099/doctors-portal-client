@@ -4,56 +4,81 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../contexts/AuthProvider';
+import useToken from '../../hooks/useToken';
 
 const SignUp = () => {
-    const {register, formState: {errors}, handleSubmit} = useForm();
-    const {createUser, updateUserProfile, providerLogin} = useContext(AuthContext);
+    const { register, formState: { errors }, handleSubmit } = useForm();
+    const { createUser, updateUserProfile, providerLogin } = useContext(AuthContext);
     const [error, setError] = useState(""); // firebase error message
+    const [createdUserEmail, setCreatedUserEmail] = useState('');
+    const [token] = useToken(createdUserEmail);
     const navigate = useNavigate();
+    
+    if (token) {
+        navigate('/');
+    }
 
     const googleProvider = new GoogleAuthProvider();
 
     // User sign up function
     const handleSignUp = (data, e) => {
-        const {email, password, name} = data;
+        const { email, password, name } = data;
         setError("");
 
         createUser(email, password)
-        .then(result => {
-            const user = result.user;
-            console.log(user);
-            handleUpdateUser(name);
-            toast.success("Sign up successful!");
-        })
-        .catch(err => {
-            console.error(err);
-            setError(err.message);
-        });
+            .then(result => {
+                const user = result.user;
+                console.log(user);
+
+                const profile = {
+                    displayName: name
+                }
+
+                updateUserProfile(profile)
+                    .then(() => {
+                        console.log("profile updated")
+                        saveUser(name, email);  // to save the user to DB
+                    })
+                    .catch(err => console.error(err));
+
+                toast.success("Sign up successful!");
+            })
+            .catch(err => {
+                console.error(err);
+                setError(err.message);
+            });
 
         e.target.reset();   // resets the form
     }
 
-    const handleUpdateUser = (name) => {
-        const profile = {
-            displayName: name
-        }
 
-        updateUserProfile(profile)
-        .then(() => {
-            console.log("profile updated")
-            navigate('/');
+    // Saving user to DB function
+    const saveUser = (name, email) => {
+        const user = { name, email };
+
+        fetch('http://localhost:5000/users', {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify(user)
         })
-        .catch(err => console.error(err));
+            .then(res => res.json())
+            .then(data => {
+                setCreatedUserEmail(email);    // sets the email
+            })
+            .catch(err => console.error(err));
     }
+
 
     const handleGoogleSignIn = () => {
         providerLogin(googleProvider)
-        .then(result => {
-            const user = result.user;
-            console.log(user);
-            navigate("/");
-        })
-        .catch(err => console.error(err));
+            .then(result => {
+                const user = result.user;
+                console.log(user);
+                navigate("/");
+            })
+            .catch(err => console.error(err));
     }
 
     return (
@@ -65,7 +90,7 @@ const SignUp = () => {
                         <label className="label">
                             <span className="label-text">Name</span>
                         </label>
-                        <input type="text" {...register("name", {required: "Please fill up this field"})} className="input input-bordered w-full" />
+                        <input type="text" {...register("name", { required: "Please fill up this field" })} className="input input-bordered w-full" />
                         {errors.name && <p className='text-red-600' role="alert">{errors.name?.message}</p>}
                     </div>
                     <div className="form-control w-full">
@@ -80,12 +105,12 @@ const SignUp = () => {
                             <span className="label-text">Password</span>
                         </label>
                         <input type="password" {...register("password", {
-                            required: "Password is required", minLength: {value: 6, message: "Password must be at least 6 characters long"},
+                            required: "Password is required", minLength: { value: 6, message: "Password must be at least 6 characters long" },
                             pattern: {
                                 value: /(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9])/,
                                 message: "Password must have at least 1 uppercase, 1 special character and 1 number"
                             }
-                            })} className="input input-bordered w-full mb-1" />
+                        })} className="input input-bordered w-full mb-1" />
                         {/* validation error */}
                         {errors.password && <p className='text-red-600' role="alert">{errors.password?.message}</p>}
                         {/* firebase error */}

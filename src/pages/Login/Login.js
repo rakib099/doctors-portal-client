@@ -3,6 +3,7 @@ import React, { useContext, useState } from 'react';
 import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../contexts/AuthProvider';
+import useToken from '../../hooks/useToken';
 import ForgotPassModal from './ForgotPassModal';
 
 const Login = () => {
@@ -10,12 +11,19 @@ const Login = () => {
     const { signIn, providerLogin } = useContext(AuthContext);
     const [error, setError] = useState(""); // firebase error message
     const [openModal, setOpenModal] = useState(true);
+    const [loginUserEmail, setLoginUserEmail] = useState('');
+    const [token] = useToken(loginUserEmail);
 
     const location = useLocation();
     const navigate = useNavigate();
     const from = location.state?.from?.pathname || "/";
 
     const googleProvider = new GoogleAuthProvider();
+    
+    if (token) {
+        navigate(from, { replace: true });
+    }
+
 
     const handleLogin = (data, e) => {
         e.target.reset();
@@ -25,20 +33,23 @@ const Login = () => {
             .then(result => {
                 const user = result.user;
                 console.log(user);
-                navigate(from, { replace: true });
+
+                setLoginUserEmail(data.email);
+            
             })
             .catch(err => {
                 console.error(err);
                 setError(err.message);
             });
     }
+    
 
     const handleGoogleSignIn = () => {
         providerLogin(googleProvider)
             .then(result => {
                 const user = result.user;
                 console.log(user);
-                navigate(from, { replace: true });
+                setLoginUserEmail(user.email);
             })
             .catch(err => console.error(err));
     }
