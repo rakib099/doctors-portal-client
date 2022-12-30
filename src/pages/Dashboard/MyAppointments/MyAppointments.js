@@ -4,17 +4,18 @@ import { AuthContext } from '../../../contexts/AuthProvider';
 import AppointmentRow from '../AppointmentRow/AppointmentRow';
 
 const MyAppointments = () => {
-    const {user} = useContext(AuthContext);
+    const { user } = useContext(AuthContext);
 
-    const { data:appointments = [] } = useQuery({
+    const { data: appointments = [] } = useQuery({
         queryKey: ['bookings', user?.email],
-        queryFn: () => {
-            return fetch(`http://localhost:5000/bookings?email=${user?.email}`, {
+        queryFn: async () => {
+            const res = await fetch(`http://localhost:5000/bookings?email=${user?.email}`, {
                 headers: {
-                    authorization: `Bearer ${localStorage.getItem('accessToken')}`
+                    authorization: `bearer ${localStorage.getItem('accessToken')}`
                 }
             })
-                .then(res => res.json())
+            const data = await res.json();
+            return data;
         }
     })
 
@@ -37,7 +38,7 @@ const MyAppointments = () => {
                         </thead>
                         <tbody>
                             {
-                                appointments.map((appointment, idx) => <AppointmentRow 
+                                appointments.map((appointment, idx) => <AppointmentRow
                                     key={appointment._id}
                                     appointment={appointment}
                                     idx={idx}

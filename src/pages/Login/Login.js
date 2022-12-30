@@ -19,7 +19,7 @@ const Login = () => {
     const from = location.state?.from?.pathname || "/";
 
     const googleProvider = new GoogleAuthProvider();
-    
+
     if (token) {
         navigate(from, { replace: true });
     }
@@ -33,7 +33,6 @@ const Login = () => {
             .then(result => {
                 const user = result.user;
                 console.log(user);
-
                 setLoginUserEmail(data.email);
             
             })
