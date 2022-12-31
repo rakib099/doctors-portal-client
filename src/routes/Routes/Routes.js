@@ -47,6 +47,10 @@ const router = createBrowserRouter([
                 element: <AdminRoute><AllUsers /></AdminRoute>
             },
         ]
+    },
+    {
+        path: '/testing',
+        element: <Dashboard />
     }
 ]);
 

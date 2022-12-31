@@ -5,7 +5,7 @@ import { AuthContext } from '../../contexts/AuthProvider';
 import useAdmin from '../../hooks/useAdmin';
 
 const AdminRoute = ({children}) => {
-    const { user, loading } = useContext(AuthContext);
+    const { user, loading, logOut } = useContext(AuthContext);
     const [isAdmin, isAdminLoading] = useAdmin(user?.email);
     const location = useLocation();
 

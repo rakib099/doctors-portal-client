@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthProvider';
 import useAdmin from '../hooks/useAdmin';
+import ConfirmModal from '../pages/Dashboard/ConfirmModal/ConfirmModal';
 import Navbar from '../pages/Shared/Navbar/Navbar';
 
 const DashboardLayout = () => {
@@ -30,6 +31,7 @@ const DashboardLayout = () => {
                         }
                     </ul>
                 </div>
+                <ConfirmModal />
             </div>
         </>
     );

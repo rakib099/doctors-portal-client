@@ -3,7 +3,10 @@ import React from 'react';
 const Dashboard = () => {
     return (
         <div>
-            <h2>Coming Sooooooooon!</h2>
+            {/* The button to open modal */}
+            <label htmlFor="confirm-modal" className="btn">open modal</label>
+
+            
         </div>
     );
 };

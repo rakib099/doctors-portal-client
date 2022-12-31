@@ -6,7 +6,11 @@ const AllUsers = () => {
     const { data: users = [], refetch } = useQuery({
         queryKey: ['users'],
         queryFn: async () => {
-            const res = await fetch('http://localhost:5000/users');
+            const res = await fetch('http://localhost:5000/users', {
+                headers: {
+                    authorization: `bearer ${localStorage.getItem('accessToken')}`
+                }
+            });
             const data = await res.json();
             return data;
         }
@@ -20,14 +24,14 @@ const AllUsers = () => {
                 authorization: `bearer ${localStorage.getItem('accessToken')}`
             }
         })
-        .then(res => res.json())
-        .then(data => {
-            if (data.modifiedCount > 0) {
-                toast.success('Making admin successful!');
-                refetch();
-            }
-        })
-        .catch(err => console.error(err));
+            .then(res => res.json())
+            .then(data => {
+                if (data.modifiedCount > 0) {
+                    toast.success('Making admin successful!');
+                    refetch();
+                }
+            })
+            .catch(err => console.error(err));
 
     }
 
@@ -58,7 +62,7 @@ const AllUsers = () => {
                                     <td>{user.role !== 'admin' && <button
                                         onClick={() => handleMakeAdmin(user._id)}
                                         className='btn btn-xs btn-secondary'>Make Admin</button>}</td>
-                                    <td><button className='btn btn-xs btn-danger'>Remove user</button></td>
+                                    <td><label className='btn btn-xs btn-danger' htmlFor="confirm-modal">Remove user</label></td>
                                 </tr>)
                             }
                         </tbody>

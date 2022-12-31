@@ -1,5 +1,5 @@
 import { GoogleAuthProvider } from 'firebase/auth';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
 import { Link, useNavigate } from 'react-router-dom';
@@ -8,15 +8,21 @@ import useToken from '../../hooks/useToken';
 
 const SignUp = () => {
     const { register, formState: { errors }, handleSubmit } = useForm();
-    const { createUser, updateUserProfile, providerLogin } = useContext(AuthContext);
+    const { createUser, updateUserProfile, providerLogin, logOut } = useContext(AuthContext);
     const [error, setError] = useState(""); // firebase error message
     const [createdUserEmail, setCreatedUserEmail] = useState('');
     const [token] = useToken(createdUserEmail);
     const navigate = useNavigate();
-    
-    if (token) {
-        navigate('/');
-    }
+
+    useEffect(() => {
+        if (token) {
+            logOut()
+                .then(() => {
+                    navigate('/login');
+                })
+                .catch(err => console.error(err));
+        }
+    }, [token, logOut, navigate]);
 
     const googleProvider = new GoogleAuthProvider();
 
@@ -40,8 +46,6 @@ const SignUp = () => {
                         saveUser(name, email);  // to save the user to DB
                     })
                     .catch(err => console.error(err));
-
-                toast.success("Sign up successful!");
             })
             .catch(err => {
                 console.error(err);
@@ -65,7 +69,10 @@ const SignUp = () => {
         })
             .then(res => res.json())
             .then(data => {
-                setCreatedUserEmail(email);    // sets the email
+                if (data.acknowledged) {
+                    setCreatedUserEmail(email);    // sets the email
+                    toast.success("Sign up successful! You may login now.");
+                }
             })
             .catch(err => console.error(err));
     }
