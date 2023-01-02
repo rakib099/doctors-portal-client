@@ -1,10 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
-import React from 'react';
+import React, { useState } from 'react';
 import Spinner from '../../../components/Spinner/Spinner';
+import { toast } from 'react-hot-toast';
+import ConfirmModal from '../ConfirmModal/ConfirmModal';
 
 const ManageDoctors = () => {
+    const [deletingDoctor, setDeletingDoctor] = useState(null);
 
-    const { data: doctors, isLoading } = useQuery({
+    const { data: doctors, isLoading, refetch } = useQuery({
         queryKey: ['doctors'],
         queryFn: async () => {
             try {
@@ -24,6 +27,29 @@ const ManageDoctors = () => {
 
     if (isLoading) {
         return <Spinner loading={isLoading} />;
+    }
+
+    const closeModal = () => {
+        setDeletingDoctor(null);
+    }
+
+    // deleting doctor fuction
+    const handleDeleteDoctor = (doctor) => {
+        fetch(`http://localhost:5000/doctors/${doctor._id}`, {
+            method: 'DELETE',
+            headers: {
+                authorization: `bearer ${localStorage.getItem('accessToken')}`
+            }
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.deletedCount > 0) {
+                    closeModal();
+                    toast.success('Doctor deletion successful');
+                    refetch();
+                }
+            })
+            .catch(err => console.error(err));
     }
 
     return (
@@ -62,12 +88,22 @@ const ManageDoctors = () => {
                                 <td>{doctor.name}</td>
                                 <td>{doctor.email}</td>
                                 <td>{doctor.specialty}</td>
-                                <td><button className='btn btn-error btn-sm text-white'>Delete</button></td>
+                                <td><label
+                                    onClick={() => setDeletingDoctor(doctor)}
+                                    htmlFor="confirm-modal"
+                                    className='btn btn-error btn-sm text-white'>Delete</label></td>
                             </tr>)
                         }
                     </tbody>
                 </table>
             </div>
+            {
+                !!deletingDoctor && <ConfirmModal 
+                    title={`Are you sure you want to remove ${deletingDoctor.name}?`}
+                    successAction={handleDeleteDoctor}
+                    modalData={deletingDoctor}
+                />
+            }
         </div>
     );
 };
