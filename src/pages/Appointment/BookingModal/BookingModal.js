@@ -5,9 +5,9 @@ import { toast } from 'react-hot-toast';
 
 const BookingModal = ({ treatment, selectedDate, setTreatment, refetch }) => {
     // treatment is just another name of appointment option
-    const { _id, name, slots } = treatment;
+    const { _id, name, slots, price } = treatment;
     const date = format(selectedDate, 'PP');
-    const {user} = useContext(AuthContext);
+    const { user } = useContext(AuthContext);
 
     const selectTimeSlot = <select name='slot' className="select select-bordered w-full mb-5">
         {/* checking if slots are available or not */}
@@ -38,7 +38,8 @@ const BookingModal = ({ treatment, selectedDate, setTreatment, refetch }) => {
             name,
             slot,
             phone,
-            email
+            email,
+            price
         }
 
         // Todo: send data to the server
@@ -47,28 +48,29 @@ const BookingModal = ({ treatment, selectedDate, setTreatment, refetch }) => {
         fetch('http://localhost:5000/bookings', {
             method: 'POST',
             headers: {
-                'content-type': 'application/json'
+                'content-type': 'application/json',
+                authorization: `bearer ${localStorage.getItem('accessToken')}`
             },
             body: JSON.stringify(booking)
         })
-        .then(res => res.json())
-        .then(data => {
-            console.log(data);
-            if (data.acknowledged) {
-                setTreatment(null); // closes the modal
-                toast.success("Booking Confirmed!");
-                refetch();
-            }
-            else {
-                toast.error(data.message);
-            }
-        })
-        .catch(err => console.error(err));
+            .then(res => res.json())
+            .then(data => {
+                console.log(data);
+                if (data.acknowledged) {
+                    setTreatment(null); // closes the modal
+                    toast.success("Booking Confirmed!");
+                    refetch();
+                }
+                else {
+                    toast.error(data.message);
+                }
+            })
+            .catch(err => console.error(err));
     }
 
     return (
         <>
-            < input type="checkbox" id="booking-modal" className="modal-toggle" />
+            <input type="checkbox" id="booking-modal" className="modal-toggle" />
 
             <div className="modal modal-bottom sm:modal-middle">
                 <div className="modal-box relative">
