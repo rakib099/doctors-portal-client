@@ -7,7 +7,7 @@ import AppointmentRow from '../AppointmentRow/AppointmentRow';
 const MyAppointments = () => {
     const { user } = useContext(AuthContext);
 
-    const { data: appointments = [], isLoading } = useQuery({
+    const { data: appointments, isLoading } = useQuery({
         queryKey: ['bookings', user?.email],
         queryFn: async () => {
             const res = await fetch(`https://doctors-portal-server-two-pi.vercel.app/bookings?email=${user?.email}`, {

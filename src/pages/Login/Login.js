@@ -17,7 +17,6 @@ const Login = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const from = location.state?.from?.pathname || "/";
-
     const googleProvider = new GoogleAuthProvider();
 
     useEffect(() => {

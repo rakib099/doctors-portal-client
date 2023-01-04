@@ -1,4 +1,5 @@
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import './CheckoutForm.css';
 import React, { useState } from 'react';
 import Spinner from '../../../components/Spinner/Spinner';
 
