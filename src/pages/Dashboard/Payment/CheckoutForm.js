@@ -68,7 +68,7 @@ const CheckoutForm = ({ clientSecret, booking }) => {
                         email
                     }
 
-                    fetch('http://localhost:5000/payments', {
+                    fetch('https://doctors-portal-server-two-pi.vercel.app/payments', {
                         method: 'POST',
                         headers: {
                             'content-type': 'application/json',

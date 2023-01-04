@@ -15,7 +15,7 @@ const Payment = () => {
 
 
     useEffect(() => {
-        fetch('http://localhost:5000/create-payment-intent', {
+        fetch('https://doctors-portal-server-two-pi.vercel.app/create-payment-intent', {
             method: 'POST',
             headers: {
                 'content-type': 'application/json',
@@ -27,20 +27,20 @@ const Payment = () => {
             .then(data => setClientSecret(data.clientSecret));
     }, [price]);
 
-    
+
     if (navigation.state === "loading") {
         return <Spinner loading={navigation.state} />
     }
 
     return (
-        <div className=' px-12 pt-12 pb-16'>
+        <div className='bg-[#F1F5F9] px-12 pt-12 pb-16'>
             <h3 className=' text-2xl font-bold mb-5'>Payment for {treatment}</h3>
             <p className="text-base-300">Your appointment: {appointmentDate} at {slot}</p>
             <p className="text-xl font-bold">Please pay ${price}</p>
             <div className="w-96 mt-4">
                 <Elements stripe={stripePromise}>
                     <CheckoutForm
-                        booking={{_id, price, name, email}}
+                        booking={{ _id, price, name, email }}
                         clientSecret={clientSecret}
                     />
                 </Elements>

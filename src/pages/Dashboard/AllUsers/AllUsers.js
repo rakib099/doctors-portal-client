@@ -1,12 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 import { toast } from 'react-hot-toast';
+import Spinner from '../../../components/Spinner/Spinner';
 
 const AllUsers = () => {
-    const { data: users = [], refetch } = useQuery({
+    const { data: users = [], refetch, isLoading } = useQuery({
         queryKey: ['users'],
         queryFn: async () => {
-            const res = await fetch('http://localhost:5000/users', {
+            const res = await fetch('https://doctors-portal-server-two-pi.vercel.app/users', {
                 headers: {
                     authorization: `bearer ${localStorage.getItem('accessToken')}`
                 }
@@ -18,7 +19,7 @@ const AllUsers = () => {
 
     const handleMakeAdmin = (id) => {
 
-        fetch(`http://localhost:5000/users/admin/${id}`, {
+        fetch(`https://doctors-portal-server-two-pi.vercel.app/users/admin/${id}`, {
             method: 'PUT',
             headers: {
                 authorization: `bearer ${localStorage.getItem('accessToken')}`
@@ -40,35 +41,40 @@ const AllUsers = () => {
             <div className='flex justify-between mb-5'>
                 <h3 className=' text-2xl font-bold'>All Users: {users.length}</h3>
             </div>
-            <div className="appointment-table">
-                <div className="overflow-x-auto">
-                    <table className="table w-1/3 lg:w-full">
-                        {/* <!-- head --> */}
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Admin</th>
-                                <th>Delete</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {
-                                users.map((user, idx) => <tr key={user._id}>
-                                    <th>{idx + 1}</th>
-                                    <td>{user.name}</td>
-                                    <td>{user.email}</td>
-                                    <td>{user.role !== 'admin' && <button
-                                        onClick={() => handleMakeAdmin(user._id)}
-                                        className='btn btn-xs btn-secondary'>Make Admin</button>}</td>
-                                    <td><label className='btn btn-xs btn-danger' htmlFor="confirm-modal">Remove user</label></td>
-                                </tr>)
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            {
+                isLoading ?
+                    <Spinner loading={isLoading} />
+                :
+                    <div className="appointment-table">
+                        <div className="overflow-x-auto">
+                            <table className="table w-1/3 lg:w-full">
+                                {/* <!-- head --> */}
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Admin</th>
+                                        <th>Delete</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                        users.map((user, idx) => <tr key={user._id}>
+                                            <th>{idx + 1}</th>
+                                            <td>{user.name}</td>
+                                            <td>{user.email}</td>
+                                            <td>{user.role !== 'admin' && <button
+                                                onClick={() => handleMakeAdmin(user._id)}
+                                                className='btn btn-xs btn-secondary'>Make Admin</button>}</td>
+                                            <td><label className='btn btn-xs btn-danger' htmlFor="confirm-modal">Remove user</label></td>
+                                        </tr>)
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+            }
         </div>
     );
 };

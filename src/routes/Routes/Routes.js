@@ -64,7 +64,7 @@ const router = createBrowserRouter([
                 path: '/dashboard/payment/:id',
                 element: <PrivateRoute><Payment /></PrivateRoute>,
                 loader: ({params}) => {
-                    return fetch(`http://localhost:5000/bookings/${params.id}`, {
+                    return fetch(`https://doctors-portal-server-two-pi.vercel.app/bookings/${params.id}`, {
                         headers: {
                             authorization: `bearer ${localStorage.getItem('accessToken')}`
                         }
